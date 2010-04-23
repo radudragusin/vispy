@@ -46,7 +46,7 @@ class list(list):
     def random(self, length):
         self.empty()
         for i in range(0,length):
-            self.append(r.randint(0,length)) 
+            self.append(r.randint(0,length))
             
             
     def empty(self):
