@@ -26,7 +26,7 @@ class list(list):
                 pos.update({list[i]:(i,0)})
             return pos
 
-        plt.figure(figNum)
+        plt.figure(figNum, facecolor='white')
         plt.clf()
         plt.axis('off')
         self.G.clear()

@@ -1,5 +1,12 @@
 ##
-## graph2.py
+## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
+## Insitute of Computer Science, Copenhagen University, Denmark
+##
+##
+##
+## graph.py
+##
+## LICENSED UNDER: GNU General Public License v2
 ##
 
 import matplotlib.pyplot as plt
@@ -16,6 +23,8 @@ class Graph(abstract.GraphDatastructure):
         self.edgeIdCount = 0
         plt.ion()
         self.G = nx.Graph()
+        self.oldGNodes = []
+        self.oldGEdges = []
         self.pos = {}
 
     def addNode(self, node_id):
@@ -43,8 +52,8 @@ class Graph(abstract.GraphDatastructure):
         for node in self.nodes:
             if node.id == node_id:
                 self.nodes.remove(node)
-                adjEdges = self.getAdjEdges(self, node_id)
-                self.removeEdges(self, adjEdges)
+                adjEdges = self.getAdjEdges(node_id)
+                self.removeEdges(adjEdges)
                 return True
         return False
 
@@ -54,34 +63,30 @@ class Graph(abstract.GraphDatastructure):
                 return True
         return False
 
-    def edgeExists(self, edge_id):
+    def edgeExists(self, (node_id_1, node_id_2)):
         for edge in self.edges:
-            if edge.getId() == edge_id:
+            if ((edge.start_node, edge.end_node) == (node_id_1, node_id_2)):
                 return True
         return False
     
-    def removeEdge(self, (node_id_1, node_id_2), edge_id=None):
+    def removeEdge(self, (node_id_1, node_id_2)):
         for edge in self.edges:
-            if (edge.start_node == node_id_1 and edge.end_node == node_id_2) or (edge.start_node == node_id_2 and edge.end_node == node_id_1):
-                if edge_id:
-                    self.edges.remove(edge)
-                    return True
-                else:
-                    if edge.id == edge_id:
-                        self.edges.remove(edge)
-                        return True
+            if ((edge.start_node, edge.end_node) == (node_id_1, node_id_2)) or ((edge.start_node, edge.end_node) == (node_id_2, node_id_1)):
+                self.edges.remove(edge)
+                return True
         return False
 
     def removeEdges(self, edge_list):
+        # suppose edge_list is list of sets
         for edge in edge_list:
-            self.edges.remove(edge)
+            self.removeEdge(edge)
         return True
 
     def getNodes(self):
-        return self.nodes
+        return [n.getId() for n in self.nodes]
     
     def getEdges(self): 
-        return self.edges
+        return [(e.start_node, e.end_node) for e in self.edges]
     
     def degreeList(self): 
         return False
@@ -90,7 +95,7 @@ class Graph(abstract.GraphDatastructure):
         buf = []
         for edge in self.edges:
             if edge.start_node == node_id or edge.end_node == node_id:
-                buf.append(edge)
+                buf.append((edge.start_node, edge.end_node))
         return buf
 
     def getAdjNodes(self, node_id):
@@ -104,7 +109,7 @@ class Graph(abstract.GraphDatastructure):
         return buf
         
     def isEdge(self, (node_id_1, node_id_2)):
-        return False
+        return self.edgeExists((node_id_1, node_id_2))
     
     def getNode(self, node_id): 
         for node in self.nodes:
@@ -112,8 +117,8 @@ class Graph(abstract.GraphDatastructure):
                 return node
         return False
     
-    def vizMe(self, figNum=1, markEdges=[], markNodes=[]):
-        plt.figure(figNum)
+    def vizMe(self, figNum=1, markEdges=[], markNodes=[], savefig=None, savefig_format='png'):
+        plt.figure(figNum, facecolor='white')
         plt.clf()
         plt.axis('off')
         self.G.clear()
@@ -122,24 +127,29 @@ class Graph(abstract.GraphDatastructure):
 
         for edge in self.edges:
             self.G.add_edge(edge.start_node,edge.end_node)
+            
+        if (not self.oldGNodes and not self.oldGEdges) or (not self.oldGNodes == self.G.nodes() or not self.oldGEdges == self.G.edges()):
+            self.pos = nx.spring_layout(self.G)
 
+        self.oldGNodes = self.G.nodes()
+        self.oldGEdges = self.G.edges()
 
         if not markNodes and not markEdges:
-            nx.draw(self.G)
+            nx.draw_networkx(self.G, self.pos, node_color='#557A66')#, edge_color='#272E2E')
         else:
             unmarkedNodes = list(set(self.G.nodes()).difference(markNodes))
             unmarkedEdges = list(set(self.G.edges()).difference(markEdges))
-#            if not self.pos:
-            self.pos = nx.spring_layout(self.G)
 
-            nx.draw_networkx_nodes(self.G, pos, nodelist=unmarkedNodes)#, node_size=700)
-            nx.draw_networkx_nodes(self.G, pos, nodelist=markNodes, node_size=700)#, node_color='b')
-            
-            nx.draw_networkx_edges(self.G, pos, edgelist=unmarkedEdges)#, width=6)
-            nx.draw_networkx_edges(self.G, pos, edgelist=markEdges,width=6)# ,edge_color='b')
+            nx.draw_networkx_nodes(self.G, self.pos, nodelist=unmarkedNodes, node_color='#557A66')#, node_size=700)
+            nx.draw_networkx_nodes(self.G, self.pos, nodelist=markNodes, node_size=700, node_color='#9ed95e')
+            # E82B1E <- roed sort trae
+            nx.draw_networkx_edges(self.G, self.pos, edgelist=unmarkedEdges)#, edge_color='#272E2E')#, width=6)
+            nx.draw_networkx_edges(self.G, self.pos, edgelist=markEdges,width=6)#, edge_color='#272E2E')
 
-            nx.draw_networkx_labels(self.G, pos)
+            nx.draw_networkx_labels(self.G, self.pos)
 
+        if savefig:
+            plt.savefig(savefig, format=savefig_format)
 
     def vizMeNot(self):
         self.pos = {}
@@ -156,7 +166,7 @@ class Graph(abstract.GraphDatastructure):
             self.addEdge((i, neighbor))
                 
     def __str__(self):
-        return False
+        return
 #        G = nx.graph()
 #        for node in self.nodes:
 #            G.add_node()

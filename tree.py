@@ -73,7 +73,47 @@ class Tree():
         for t in self.children:
             c += t.getCount()
         return c
+    def fam(self):
+        res = []
+        if(self.children == []):
+            res.append(1)
+        else:
+            for child in self.children:
+                res.append(child.fam())
+        return res
+        
+def calcPri(pri):
+    if(type(pri[0]) is list):
+        res = [len(pri)]
+        for l in pri:
+            res.append(calcPriItt(l))
+        return res
+    else:
+        return len(pri)
+
+def calcPriItt(pri):
+    if(type(pri[0]) is list):
+        res = [len(pri)]
+        totalThisNiveau = 0
+        for l in pri:
+            tmp = calcPriItt(l)
+            totalThisNiveau += tmp[0]
+        res.append(totalThisNiveau)
+        return res
+    else:
+        return len(pri)
+
+def addList(lst):
+    tmp = []
+    for l in lst:
+        for i in range(0,len(l)):
+            try:
+                tmp[i] += l[i]
+            except:
+                tmp.append(l[i])
+    return tmp
     
+                
 class Leaf:
     def __init__(self, content):
         self.content = content        
@@ -92,6 +132,8 @@ class Leaf:
             return [[(p,num)],num]
         else:
             return []
+    def fam(self):
+        return [1]    
         
 t1 = Tree([Tree([Tree([Leaf('a'),Leaf('b')]),Tree([Leaf('c'),Leaf('d')])]),Tree([Leaf('e'),Leaf('f')])])
 t2 = Tree([Tree([Tree([Leaf('a'),Leaf('b')]),Tree([Leaf('c'),Leaf('d')])]),Tree([Leaf('e'),Leaf('f')]), Tree([Tree([Leaf('g'),Leaf('h')]), Tree([Tree([Leaf('i'),Leaf('j'),Leaf('k'),Leaf('l')])])])])
