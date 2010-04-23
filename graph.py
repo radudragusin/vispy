@@ -117,7 +117,7 @@ class Graph(abstract.GraphDatastructure):
                 return node
         return False
     
-    def vizMe(self, figNum=1, markEdges=[], markNodes=[], savefig=None, savefig_format='png'):
+    def vizMe(self, figNum=1, markEdges=[], markNodes=[], savefig=None, savefig_format='png', nodeLabels=None):
         plt.figure(figNum, facecolor='white')
         plt.clf()
         plt.axis('off')
@@ -135,7 +135,11 @@ class Graph(abstract.GraphDatastructure):
         self.oldGEdges = self.G.edges()
 
         if not markNodes and not markEdges:
-            nx.draw_networkx(self.G, self.pos, node_color='#557A66')#, edge_color='#272E2E')
+            nx.draw_networkx_nodes(self.G, self.pos, node_color='#557A66')#, edge_color='#272E2E')
+            nx.draw_networkx_edges(self.G, self.pos)#, edge_color='#272E2E')
+            nx.draw_networkx_labels(self.G, self.pos, labels=nodeLabels)
+#            nx.draw_networkx_edge_labels(self.G, self.pos, edge_labels=nodeLabels)
+# drawing edge labels are only avaliable from networkX 1.1 and beyond
         else:
             unmarkedNodes = list(set(self.G.nodes()).difference(markNodes))
             unmarkedEdges = list(set(self.G.edges()).difference(markEdges))
@@ -146,7 +150,7 @@ class Graph(abstract.GraphDatastructure):
             nx.draw_networkx_edges(self.G, self.pos, edgelist=unmarkedEdges)#, edge_color='#272E2E')#, width=6)
             nx.draw_networkx_edges(self.G, self.pos, edgelist=markEdges,width=6)#, edge_color='#272E2E')
 
-            nx.draw_networkx_labels(self.G, self.pos)
+            nx.draw_networkx_labels(self.G, self.pos, labels=nodeLabels)
 
         if savefig:
             plt.savefig(savefig, format=savefig_format)
