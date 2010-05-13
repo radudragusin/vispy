@@ -9,69 +9,71 @@
 ## LICENSED UNDER: GNU General Public License v2
 ##
 
+import random as r
 import matplotlib.pyplot as plt
 import networkx as nx
-import random as r
 import datastructure as abstract
 
 class Graph(abstract.GraphDatastructure):
     def __init__ (self):
-        self.nodes = []
+        self.vertices = []
         self.edges = []
-        self.last_added_node = -1
-        self.last_added_edge = -1
-        self.edgeIdCount = 0
+        self._lastaddedvertex = -1
+        self._lastaddededge = -1
+        self._edgeIdCount = 0
+        #needed for internal networkX representation
         plt.ion()
-        self.G = nx.Graph()
-        self.oldGNodes = []
-        self.oldGEdges = []
-        self.pos = {}
+        self._G = nx.Graph()
+        self._oldGVertices = []
+        self._oldGEdges = []
+        self._pos = {}
 
-    def addNode(self, node_id):
-        if node_id == self.last_added_node: return
-        for node in self.nodes:
-            if node.getId() == node_id:
+    def addVertex(self, vertex_id):
+        if vertex_id == self._lastaddedvertex: return
+        for vertex in self.vertices:
+            if vertex.getId() == vertex_id:
                 return
-        self.nodes.append(Node(node_id))
-        self.last_added_id = node_id
+        self.vertices.append(Vertex(vertex_id))
+        self.last_added_id = vertex_id
         
-    def addEdge(self, (node_id_1, node_id_2), weight=0): 
-#        if edge_id == self.last_added_edge: return False
-#        for edge in self.edges:
-#            if edge.getId() == edge_id:
-#                return False
-        if self.nodeExists(node_id_1) or self.nodeExists(node_id_2):
-            edge_id = self.edgeIdCount
-            self.edgeIdCount += 1
-            newedge = Edge(edge_id, (node_id_1, node_id_2), weight)
+    def addEdge(self, (vertex_id_1, vertex_id_2), weight=0): 
+# TO DO:
+# remove possibilies of adding an edge that already exists:
+# edges.contain( (1,2) ) such that add((2,1)) or add((1,2)) must fail.
+# TO DO:
+# automatically create vertices according to vertex_id_ if they do not already exist.
+        if self.vertexExists(vertex_id_1) and self.vertexExists(vertex_id_2):
+            edge_id = self._edgeIdCount
+            self._edgeIdCount += 1
+            newedge = Edge(edge_id, (vertex_id_1, vertex_id_2), weight)
             self.edges.append(newedge)
             return
         return False
     
-    def removeNode(self, node_id):
-        for node in self.nodes:
-            if node.id == node_id:
-                self.nodes.remove(node)
-                adjEdges = self.getAdjEdges(node_id)
+    def removeVertex(self, vertex_id):
+        for vertex in self.vertices:
+            if vertex.getId() == vertex_id:
+                self.vertices.remove(vertex)
+                adjEdges = self.getAdjEdges(vertex_id)
                 self.removeEdges(adjEdges)
                 return True
         return False
 
-    def nodeExists(self, node_id):
-        for node in self.nodes:
-            if node.getId() == node_id:
+    def vertexExists(self, vertex_id):
+        for vertex in self.vertices:
+            if vertex.getId() == vertex_id:
                 return True
         return False
 
-    def edgeExists(self, (node_id_1, node_id_2)):
-        for edge in self.edges:
-            if ((edge.start_node, edge.end_node) == (node_id_1, node_id_2)):
-                return True
-        return False
+#    def edgeExists(self, (vertex_id_1, vertex_id_2)):
+#        for edge in self.edges:
+#            if ((edge.start_vertex, edge.end_vertex) == (vertex_id_1, vertex_id_2)):
+#                return True
+#        return False
     
-    def removeEdge(self, (node_id_1, node_id_2)):
+    def removeEdge(self, (vertex_id_1, vertex_id_2)):
         for edge in self.edges:
-            if ((edge.start_node, edge.end_node) == (node_id_1, node_id_2)) or ((edge.start_node, edge.end_node) == (node_id_2, node_id_1)):
+            if ((edge.start_vertex, edge.end_vertex) == (vertex_id_1, vertex_id_2)) or ((edge.start_vertex, edge.end_vertex) == (vertex_id_2, vertex_id_1)):
                 self.edges.remove(edge)
                 return True
         return False
@@ -82,115 +84,115 @@ class Graph(abstract.GraphDatastructure):
             self.removeEdge(edge)
         return True
 
-    def getNodes(self):
-        return [n.getId() for n in self.nodes]
+    def getVertices(self):
+        return [n.getId() for n in self.vertices]
     
     def getEdges(self): 
-        return [(e.start_node, e.end_node) for e in self.edges]
+        return [(e.start_vertex, e.end_vertex) for e in self.edges]
     
     def degreeList(self): 
         return False
     
-    def getAdjEdges(self, node_id):
+    def getAdjEdges(self, vertex_id):
         buf = []
         for edge in self.edges:
-            if edge.start_node == node_id or edge.end_node == node_id:
-                buf.append((edge.start_node, edge.end_node))
+            if edge.start_vertex == vertex_id or edge.end_vertex == vertex_id:
+                buf.append((edge.start_vertex, edge.end_vertex))
         return buf
 
-    def getAdjNodes(self, node_id):
+    def getAdjvertices(self, vertex_id):
         buf = []
-        adjEdges = self.getAdjEdges(self, node_id)
+        adjEdges = self.getAdjEdges(self, vertex_id)
         for edge in adjEdges:
-            if edge.start_node == node_id:
-                buf.append(edge.end_node)
-            elif edge.end_node == node_id:
-                buf.append(edge.start_node)
+            if edge.start_vertex == vertex_id:
+                buf.append(edge.end_vertex)
+            elif edge.end_vertex == vertex_id:
+                buf.append(edge.start_vertex)
         return buf
-        
-    def isEdge(self, (node_id_1, node_id_2)):
-        return self.edgeExists((node_id_1, node_id_2))
     
-    def getNode(self, node_id): 
-        for node in self.nodes:
-            if node.node_id == node_id:
-                return node
+    def getVertex(self, vertex_id): 
+        for vertex in self.vertices:
+            if vertex.vertex_id == vertex_id:
+                return vertex
         return False
     
-    def vizMe(self, figNum=1, markEdges=[], markNodes=[], savefig=None, savefig_format='png', nodeLabels=None):
+    def visualise(self, figNum=1, markEdges=[], markVertices=[], savefig=None,
+        savefig_format='png', vertexLabels=None):
         plt.figure(figNum, facecolor='white')
         plt.clf()
         plt.axis('off')
-        self.G.clear()
-        for node in self.nodes:
-            self.G.add_node(node.id)
+        self._G.clear()
+        for vertex in self.vertices:
+            self._G.add_node(vertex.getId())
 
         for edge in self.edges:
-            self.G.add_edge(edge.start_node,edge.end_node)
+            self._G.add_edge(edge.start_vertex,edge.end_vertex)
             
-        if (not self.oldGNodes and not self.oldGEdges) or (not self.oldGNodes == self.G.nodes() or not self.oldGEdges == self.G.edges()):
-            self.pos = nx.spring_layout(self.G)
+        if (not self._oldGVertices and not self._oldGEdges) or (not self._oldGVertices == self._G.nodes() or not self._oldGEdges == self._G.edges()):
+            self._pos = nx.spring_layout(self._G)
 
-        self.oldGNodes = self.G.nodes()
-        self.oldGEdges = self.G.edges()
+        self._oldGVertices = self._G.nodes()
+        self._oldGEdges = self._G.edges()
 
-        if not markNodes and not markEdges:
-            nx.draw_networkx_nodes(self.G, self.pos, node_color='#557A66')#, edge_color='#272E2E')
-            nx.draw_networkx_edges(self.G, self.pos)#, edge_color='#272E2E')
-            nx.draw_networkx_labels(self.G, self.pos, labels=nodeLabels)
-#            nx.draw_networkx_edge_labels(self.G, self.pos, edge_labels=nodeLabels)
+        if not markVertices and not markEdges:
+            nx.draw_networkx_nodes(self._G, self._pos, node_color='#557A66')#, edge_color='#272E2E')
+            nx.draw_networkx_edges(self._G, self._pos)#, edge_color='#272E2E')
+            nx.draw_networkx_labels(self._G, self._pos, labels=vertexLabels)
+#            nx.draw_networkx_edge_labels(self.G, self._pos, edge_labels=vertexLabels)
 # drawing edge labels are only avaliable from networkX 1.1 and beyond
         else:
-            unmarkedNodes = list(set(self.G.nodes()).difference(markNodes))
-            unmarkedEdges = list(set(self.G.edges()).difference(markEdges))
+            unmarkedVertices = list(set(self._G.nodes()).difference(markVertices))
+            unmarkedEdges = list(set(self._G.edges()).difference(markEdges))
 
-            nx.draw_networkx_nodes(self.G, self.pos, nodelist=unmarkedNodes, node_color='#557A66')#, node_size=700)
-            nx.draw_networkx_nodes(self.G, self.pos, nodelist=markNodes, node_size=700, node_color='#9ed95e')
+            nx.draw_networkx_nodes(self._G, self._pos, nodelist=unmarkedVertices, node_color='#557A66')#, vertex_size=700)
+            nx.draw_networkx_nodes(self._G, self._pos, nodelist=markVertices, node_size=700, node_color='#9ed95e')
             # E82B1E <- roed sort trae
-            nx.draw_networkx_edges(self.G, self.pos, edgelist=unmarkedEdges)#, edge_color='#272E2E')#, width=6)
-            nx.draw_networkx_edges(self.G, self.pos, edgelist=markEdges,width=6)#, edge_color='#272E2E')
+            nx.draw_networkx_edges(self._G, self._pos, edgelist=unmarkedEdges)#, edge_color='#272E2E')#, width=6)
+            nx.draw_networkx_edges(self._G, self._pos, edgelist=markEdges,width=6)#, edge_color='#272E2E')
 
-            nx.draw_networkx_labels(self.G, self.pos, labels=nodeLabels)
+            nx.draw_networkx_labels(self._G, self._pos, labels=vertexLabels)
 
         if savefig:
             plt.savefig(savefig, format=savefig_format)
 
-    def vizMeNot(self):
-        self.pos = {}
+    def clearVisualisation(self):
+        self._pos = {}
         plt.close()
         
-    def random(self, n):
+    def generateRandomGraph(self, numberofvertices, numberofedges=0):
         self.clear()
-        nodeId = 0
-        self.addNode(nodeId)
-        for i in range(1,n):
-            neighbor = r.randint(0,len(self.nodes)-1)
-            nodeId += 1
-            self.addNode(i)
+        vertexId = 0
+        self.addVertex(vertexId)
+        for i in range(1,numberofvertices):
+            neighbor = r.randint(0,len(self.vertices)-1)
+            vertexId += 1
+            self.addVertex(i)
             self.addEdge((i, neighbor))
-                
+        
     def __str__(self):
         return
-#        G = nx.graph()
-#        for node in self.nodes:
-#            G.add_node()
-    
-    def empty(self): 
-        self.clear()
-    
+        
+        
     def clear(self): 
-        self.nodes = []
+        self.vertices = []
         self.edges = []
+        self._lastaddedvertex = -1
+        self._lastaddededge = -1
+        self._edgeIdCount = 0
+        self._G = nx.Graph()
+        self._oldGVertices = []
+        self._oldGEdges = []
+        self._pos = {}
 
 
 
-class Node:
-    def __init__(self, node_id, label=None):
-        self.id = node_id
+class Vertex:
+    def __init__(self, vertex_id, label=None):
+        self._id = vertex_id
         self.label = label
         
     def getId(self):
-        return self.id
+        return self._id
         
     def getLabel(self):
         if not self.label:
@@ -198,14 +200,14 @@ class Node:
         return self.label
     
 class Edge:
-    def __init__(self, edge_id, (start_node_id, end_node_id), weight):
-        self.id = edge_id
+    def __init__(self, edge_id, (start_vertex_id, end_vertex_id), weight):
+        self._id = edge_id
         self.weight = weight
-        self.start_node = start_node_id
-        self.end_node = end_node_id
+        self.start_vertex = start_vertex_id
+        self.end_vertex = end_vertex_id
             
     def getId(self):
-        return self.id
+        return self._id
     def getWeight(self):
         return self.weight
     

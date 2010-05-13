@@ -16,31 +16,34 @@ class list(list):
         for i in content:
             self.append(i)
         plt.ion()
-        self.G = nx.Graph()
+        self._G = nx.Graph()
 
-    def vizMe(self, figNum=1, positioning=None):
+    def visualise(self, figNum=1, positioning=None):
 
-        def calcPos(list):
+        def calcPos(lst):
             pos = {}
-            for i in range(0,len(list)):
-                pos.update({list[i]:(i,0)})
-            return pos
+            labels = {}
+            for i in range(0,len(lst)):
+                pos[i] = (i,0)
+                labels[i] = lst[i]
+            return pos, labels
 
         plt.figure(figNum, facecolor='white')
         plt.clf()
         plt.axis('off')
-        self.G.clear()
+        self._G.clear()
         if not positioning:
             positioning = calcPos
-        for i in self:
-            self.G.add_node(i)
-        pos = positioning(self.G.nodes())
+        for i in range(0,len(self)):
+            self._G.add_node(i)
+        pos, labels = positioning(self)
         
-        nx.draw_networkx(self.G, pos)
-
+#        nx.draw_networkx(self.G, pos)
+        nx.draw_networkx_nodes(self._G, pos, node_color='#557A66')#, edge_color='#272E2E')
+        nx.draw_networkx_labels(self._G, pos, labels=labels)
         
 
-    def vizMeNot(self):
+    def clearVisualisation(self):
         plt.close()
         
     def random(self, length):
