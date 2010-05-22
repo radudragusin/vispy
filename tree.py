@@ -1,5 +1,12 @@
 ##
+## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
+## Insitute of Computer Science, Copenhagen University, Denmark
+##
+## Date: 22-05-2010
+##
 ## tree.py
+##
+## LICENSED UNDER: GNU General Public License v2
 ##
 
 import matplotlib.pyplot as plt

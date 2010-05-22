@@ -1,5 +1,12 @@
 ##
+## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
+## Insitute of Computer Science, Copenhagen University, Denmark
+##
+## Date: 22-05-2010
+##
 ## list.py
+##
+## LICENSED UNDER: GNU General Public License v2
 ##
 
 import matplotlib.pyplot as plt
@@ -8,21 +15,25 @@ import random as r
 
 
 
-class list(list):
-    ''' Simply inherit the original list class and extend with new 
-    functionality, such as visualise, generateRandomList, etc.
-'''      
+class List(list):
+    """ inherits the built-in list container and extend with new 
+    functionality, such as visualise, generateRandomList, etc."""
     def __init__ (self, content=None):
+        """ constructor. Specify the content variable to add content to the
+        structure at initialisation. """
         if not content:
             content = []
         for i in content:
             self.append(i)
 
     def __subconstruct__(self):
+        """Sub constructor managing initialisations needed for visualisations.
+        This method is invoked implicitly."""
         plt.ion()
         self._G = nx.Graph()
 
     def visualise(self, figNum=1, positioning=None):
+        """ Method to invoke the visualisation of the content of the structure."""
         try:
             if self._G:
                 pass
@@ -57,9 +68,11 @@ class list(list):
         
 
     def clearVisualisation(self):
+        """ Clears and closes the active visualisations"""
         plt.close()
         
     def generateRandomList(self, length=0, minvalue=0, maxvalue=20):
+        """ Generates and occupies the structure with random elements."""
         if length == 0:
             length = r.randint(5,20)
             
@@ -70,6 +83,7 @@ class list(list):
 #        self.append("wuhuuu!");
     
     def clear(self): 
+        """ Clears and empties the structure of elements """
         self = list()            
         self.__subconstruct__()
             

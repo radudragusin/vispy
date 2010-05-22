@@ -1,3 +1,15 @@
+##
+## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
+## Insitute of Computer Science, Copenhagen University, Denmark
+##
+## Date: 22-05-2010
+##
+## algo.py
+##
+## LICENSED UNDER: GNU General Public License v2
+##
+
+
 ##########################################################
 # Minimum
 ##########################################################
