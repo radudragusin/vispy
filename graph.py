@@ -15,23 +15,19 @@ import networkx as nx
 import datastructure as abstract
 
 class Graph(abstract.GraphDatastructure):
-    def __init__ (self, visual=False):
+    def __init__ (self):
         self.vertices = {}
         self.edges = {}
         self._edgeidcount = 0
-        self.__subconstruct__(visual)
-
-    def __subconstruct__(self, visual):
-        """ Contains all initialisations needed for the visualiser"""
-        self._visualisation = visual
-        plt.ion()
-        self._g = nx.Graph()
-        self._oldgvertices = []
-        self._oldgedges = []
-        self._pos = {}
+#        self.__subconstruct__(visual)
 
     def addVertex(self, vertex_id):
         self.vertices[vertex_id] = Vertex(vertex_id)
+
+    def removeVertex(self, vertex_id):
+        if self.vertexExists(vertex_id):
+            self.removeEdges(self.getAdjEdges(vertex_id))
+            del self.vertices[vertex_id]
 
     def addEdge(self, (vertex_id_1, vertex_id_2), weight=0): 
         if not self.vertexExists(vertex_id_1): self.addVertex(vertex_id_1)
@@ -41,20 +37,15 @@ class Graph(abstract.GraphDatastructure):
         self.edges[(vertex_id_1, vertex_id_2)] = Edge(edge_id, (vertex_id_1,\
                                                          vertex_id_2), weight)
 
-    def removeVertex(self, vertex_id):
-        if vertex_id in self.getVertices():
-            del self.getVertices()[vertex_id]
-            self.removeEdges(self.getAdjEdges(vertex_id))
+    def removeEdge(self, (vertex_id_1, vertex_id_2)):
+        if self.edgeExists((vertex_id_1, vertex_id_2)):
+            del self.edges[(vertex_id_1, vertex_id_2)]
 
     def vertexExists(self, vertex_id):
         return vertex_id in self.vertices
 
     def edgeExists(self, (vertex_id_1, vertex_id_2)):
         return (vertex_id_1, vertex_id_2) in self.edges
-    
-    def removeEdge(self, (vertex_id_1, vertex_id_2)):
-        if self.edgeExists((vertex_id_1, vertex_id_2)):
-            del self.getEdges()[(vertex_id_1, vertex_id_2)]
 
     def removeEdges(self, edge_list):
         for edge in edge_list:
@@ -72,7 +63,7 @@ class Graph(abstract.GraphDatastructure):
 #        return
     
     def getAdjEdges(self, vertex_id):
-        return [(edge.start_vertex, edge.end_vertex) for edge in self.getEdges() if self.getEdge(edge).start_vertex == vertex_id or self.getEdge(edge).end_vertex == vertex_id]
+        return [(edge.start_vertex, edge.end_vertex) for edge in self.getEdges() if edge.start_vertex == vertex_id or edge.end_vertex == vertex_id]
 
     def getAdjVertices(self, vertex_id):
         # this function needs rewriting
@@ -91,18 +82,42 @@ class Graph(abstract.GraphDatastructure):
     def getEdge(self, (vert_id_1, vert_id_2)):
         if self.edgeExists((vert_id_1, vert_id_2)):
             return self.edges[(vert_id_1, vert_id_2)]
+
+    def clear(self): 
+        self.vertices = {}
+        self.edges = {}
+        self._edgeidcount = 0
+        self.__subconstruct__(False)
+
+
+## all visualisation initialisations and methods:
+
+    def __subconstruct__(self, visual):
+        """ Contains all initialisations needed for the visualiser"""
+        self._visualisation = visual
+        plt.ion()
+        self._g = nx.Graph()
+        self._oldgvertices = []
+        self._oldgedges = []
+        self._pos = {}
     
     def visualise(self, figNum=1, markEdges=[], markVertices=[],
     savefig=None, savefig_format='png', vertexLabels=None):
+        try:
+            if self._g:
+                pass
+        except AttributeError:
+            self.__subconstruct__(False)
+            
         plt.figure(figNum, facecolor='white')
         plt.clf()
         plt.axis('off')
         self._g.clear()
         for vertex in self.getVertices():
-            self._g.add_node(self.getVertex(vertex).getId())
+            self._g.add_node(vertex.getId())
 
         for edge in self.getEdges():
-            self._g.add_edge(self.getEdge(edge).start_vertex,self.getEdge(edge).end_vertex)
+            self._g.add_edge(edge.start_vertex,edge.end_vertex)
             
         if (not self._oldgvertices and not self._oldgedges) or \
             (not self._oldgvertices == self._g.nodes() or \
@@ -157,14 +172,6 @@ class Graph(abstract.GraphDatastructure):
                     if not self.edgeExists((neighbour1, neighbour2)):
                         self.addEdge((neighbour1, neighbour2))
                         added = True
-
-    def clear(self): 
-        self.vertices = {}
-        self.edges = {}
-        self._edgeidcount = 0
-        self.__subconstruct__()
-
-
 
 class Vertex:
     def __init__(self, vertex_id, label=None):

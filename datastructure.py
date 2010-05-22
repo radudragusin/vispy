@@ -18,7 +18,7 @@ class GraphDatastructure():
     
     def getEdges(self):  abstract()
     
-    def degreeList(self):  abstract()
+#    def degreeList(self):  abstract()
     
     def getAdjEdges(self, node_id): abstract()
 
