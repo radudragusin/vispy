@@ -1,3 +1,14 @@
+##
+## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
+## Insitute of Computer Science, Copenhagen University, Denmark
+##
+## Date: 28-05-2010
+##
+## visualiser.py
+##
+## LICENSED UNDER: GNU General Public License v2
+##
+
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -18,10 +29,6 @@ class Visualiser:
         self._pos = {}
 
     def visualise(self, **args):
-#    def visualise(self, figNum=1, markEdges=[], markVertices=[],
-#        savefig=None, savefig_format='png', vertexLabels=None,withLabels = False,structured=False):
-#        def graphVis(figNum=1, markEdges=[], markVertices=[],
-#            savefig=None, savefig_format='png', vertexLabels=None):
         def trying(arg, default):
             if arg in args:
                 return args[arg]
@@ -247,23 +254,11 @@ class Visualiser:
                 else:
                     # Mark specific vertices
                     unmarkedNodes = list(set(lstOfNodes) - set(markVertices))
-                    print 'unmarkedNodes:'
-                    print unmarkedNodes
                     unmarkedColored = list(set(unmarkedNodes) - set(unspecifiedColors))
-                    print 'unmarkedColored'
-                    print unmarkedColored
                     unmarkedUnColored = list(set(unmarkedNodes) - set(unmarkedColored))
-                    print 'unmarkedUnColored'
-                    print unmarkedUnColored
                     markedNodes = list(set(lstOfNodes) - set(unmarkedNodes))
-                    print 'markedNodes'
-                    print markedNodes
                     markedNodesColored = list(set(markedNodes) - set(unspecifiedColors))
-                    print 'markedNodesColored'
-                    print markedNodesColored
                     markedNodesUnColored = list(set(markedNodes) - set(markedNodesColored))
-                    print 'markedNodesUnColored'
-                    print markedNodesUnColored
                     if(withLabels):
                         for index in unmarkedColored:
                             nx.draw_networkx(self._g, totalPos, nodelist=[index],labels=labels,node_color=colorMap[index],font_color='#FFFFFF')
