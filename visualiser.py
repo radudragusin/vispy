@@ -1,6 +1,6 @@
 ##
 ## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
-## Insitute of Computer Science, Copenhagen University, Denmark
+## Institute of Computer Science, Copenhagen University, Denmark
 ##
 ## Date: 28-05-2010
 ##
@@ -296,6 +296,7 @@ class Visualiser:
         def listVis():
             """ Method to invoke the visualisation of the content of the structure."""
             figNum = trying('figNum', 0)
+            positioning = trying('positioning', None)
             def calcPos(lst):
                 pos = {}
                 labels = {}
@@ -307,12 +308,12 @@ class Visualiser:
             plt.figure(figNum, facecolor='white')
             plt.clf()
             plt.axis('off')
-            self._g.clear()
+            self.obj.clear()
             if not positioning:
                 positioning = calcPos
-            for i in range(0,len(self)):
+            for i in range(0,len(self.obj)):
                 self._g.add_node(i)
-            pos, labels = positioning(self)
+            pos, labels = positioning(self.obj)
 
             nx.draw_networkx(self._g, pos, labels=labels,node_color='#557A66')
 

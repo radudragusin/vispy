@@ -1,6 +1,6 @@
 ##
 ## Authors: Kim Lundsteen Juncher and Brian Soborg Mathiasen
-## Insitute of Computer Science, Copenhagen University, Denmark
+## Institute of Computer Science, Copenhagen University, Denmark
 ##
 ## Date: 28-05-2010
 ##
