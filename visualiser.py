@@ -71,22 +71,26 @@ class Visualiser:
             self._oldgedges = self._g.edges()
 
             if not markVertices and not markEdges:
-                nx.draw_networkx_nodes(self._g, self._pos, node_color='#557A66')#, edge_color='#272E2E')
-                nx.draw_networkx_edges(self._g, self._pos)#, edge_color='#272E2E')
-                nx.draw_networkx_labels(self._g, self._pos, labels=vertexLabels)
+#                nx.draw_networkx_nodes(self._g, self._pos, node_color='#557A66')#, edge_color='#272E2E')
+#                nx.draw_networkx_edges(self._g, self._pos)#, edge_color='#272E2E')
+#                nx.draw_networkx_labels(self._g, self._pos, labels=vertexLabels)
+                nx.draw_networkx(self._g, self._pos, node_color='#557A66', labels=vertexLabels)
     #            nx.draw_networkx_edge_labels(self.G, self._pos, edge_labels=vertexLabels)
     # drawing edge labels are only available from networkX 1.1 and beyond
             else:
                 unmarkedVertices = list(set(self._g.nodes()).difference(markVertices))
                 unmarkedEdges = list(set(self._g.edges()).difference(markEdges))
 
-                nx.draw_networkx_nodes(self._g, self._pos, nodelist=unmarkedVertices, node_color='#557A66')#, vertex_size=700)
-                nx.draw_networkx_nodes(self._g, self._pos, nodelist=markVertices, node_size=700, node_color='#9ed95e')
-                # E82B1E <- roed sort trae
-                nx.draw_networkx_edges(self._g, self._pos, edgelist=unmarkedEdges)#, edge_color='#272E2E')#, width=6)
-                nx.draw_networkx_edges(self._g, self._pos, edgelist=markEdges,width=6)#, edge_color='#272E2E')
+                nx.draw_networkx(self._g, self._pos, node_color='#557A66', nodelist=unmarkedVertices, edgelist=unmarkedEdges, labels=vertexLabels)
+                nx.draw_networkx(self._g, self._pos, node_color='#9ed95e', nodelist=markVertices, edgelist=markEdges, node_size=700, labels=vertexLabels, width=6)
 
-                nx.draw_networkx_labels(self._g, self._pos, labels=vertexLabels)
+#                nx.draw_networkx_nodes(self._g, self._pos, nodelist=unmarkedVertices, node_color='#557A66')#, vertex_size=700)
+#                nx.draw_networkx_nodes(self._g, self._pos, nodelist=markVertices, node_size=700, node_color='#9ed95e')
+                # E82B1E <- roed sort trae
+#                nx.draw_networkx_edges(self._g, self._pos, edgelist=unmarkedEdges)#, edge_color='#272E2E')#, width=6)
+#                nx.draw_networkx_edges(self._g, self._pos, edgelist=markEdges,width=6)#, edge_color='#272E2E')
+
+#                nx.draw_networkx_labels(self._g, self._pos, labels=vertexLabels)
 
             if savefig:
                 plt.savefig(savefig, format=savefig_format)
